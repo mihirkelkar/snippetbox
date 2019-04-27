@@ -1,13 +1,22 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
+
+	addr := flag.String("addr", ":4000", "HTTP Network Port")
+	flag.Parse()
+
+	//Set Loggers for Info and Error
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	errLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", home).Methods("GET")
@@ -18,9 +27,9 @@ func main() {
 	staticHandler := http.FileServer(http.Dir("./ui/static/"))
 	withoutHeader := http.StripPrefix("/static", staticHandler)
 	r.PathPrefix("/static/").Handler(withoutHeader)
-
-	err := http.ListenAndServe("localhost:4000", r)
+	infoLog.Printf("Starting server on %s", *addr)
+	err := http.ListenAndServe(*addr, r)
 	if err != nil {
-		log.Fatal(err)
+		errLog.Fatal(err.Error())
 	}
 }
