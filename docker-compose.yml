@@ -1,0 +1,30 @@
+version: '3'
+
+services: 
+ db: 
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'snippetbox'
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'web'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: 'test'
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: 'test'
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - '3306:3306'
+      # Where our data will be persisted
+    volumes:
+      - my-datavolume:/var/lib/mysql
+ goapp:
+    build: .
+    ports:
+      - "4000:4000"
+
+    links:
+      - db
+
+volumes:
+  my-datavolume:
