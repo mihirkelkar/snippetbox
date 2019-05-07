@@ -15,6 +15,9 @@ services:
     ports:
       # <Port exposed> : < MySQL Port running inside container>
       - '3306:3306'
+    expose:
+      - '3306'
+ 
       # Where our data will be persisted
     volumes:
       - my-datavolume:/var/lib/mysql
